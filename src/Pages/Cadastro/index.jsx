@@ -2,59 +2,98 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Cadastro() {
-  // Definindo o estado para os campos de entrada
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  
+  const [erroEmail, setErroEmail] = useState("");
+  const [erroSenha, setErroSenha] = useState("");
 
-  // useEffect para limpar os campos quando o componente for montado
   useEffect(() => {
-    setNome(""); // Limpa o campo de nome
-    setEmail(""); // Limpa o campo de email
-    setSenha(""); // Limpa o campo de senha
+    setNome(""); 
+    setEmail(""); 
+    setSenha("");
   }, []);
 
-  // Função para lidar com o envio do formulário
+  // Função de validação de e-mail corrigida
+  const validarEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); // Validação robusta
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    let temErro = false;
+
+    // Validação do email
+    if (!email.trim()) {
+      setErroEmail("O campo email é obrigatório.");
+      temErro = true;
+    } else if (!validarEmail(email)) {
+      setErroEmail("Digite um email válido (ex: usuario@dominio.com).");
+      temErro = true;
+    } else {
+      setErroEmail("");
+    }
+
+    // Validação da senha
+    if (!senha.trim()) {
+      setErroSenha("O campo senha é obrigatório.");
+      temErro = true;
+    } else if (senha.length > 6) {
+      setErroSenha("A senha deve ter no máximo 6 caracteres.");
+      temErro = true;
+    } else {
+      setErroSenha("");
+    }
+
+    if (temErro) return;
+
     console.log("Cadastro realizado:", { nome, email, senha });
-    // Aqui você pode adicionar lógica para enviar os dados para um backend
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-5 text-center text-gray-800">Cadastro</h2>
+      
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           placeholder="Nome"
           type="text"
-          value={nome} // Controlado por state
-          onChange={(e) => setNome(e.target.value)} // Atualiza o estado
+          value={nome} 
+          onChange={(e) => setNome(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none"
-          autoComplete="off" // Desativa o autocomplete
-          name="nome"
-          id="nome"
+          autoComplete="off" 
         />
+        
         <input
-          placeholder="Email"
-          type="email"
-          value={email} // Controlado por state
-          onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
-          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none"
-          autoComplete="new-email" // Definir novo autocomplete
-          name="email"
-          id="email"
-        />
+  placeholder="Email *"
+  type="text"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className={`w-full px-3 py-2 border ${
+    erroEmail ? "border-red-500" : "border-gray-200"
+  } rounded-md focus:outline-none`}
+  autoComplete="off" // Desativa sugestões do navegador
+  spellCheck="false" // Evita correção automática
+  inputMode="email" // Indica que o campo é um email
+/>
+
+        {erroEmail && <p className="text-red-500 text-sm">{erroEmail}</p>}
+
         <input
-          placeholder="Senha"
-          type="password"
-          value={senha} // Controlado por state
-          onChange={(e) => setSenha(e.target.value)} // Atualiza o estado
-          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none"
-          autoComplete="new-password" // Usando um valor diferente para password
-          name="senha"
-          id="senha"
-        />
+  placeholder="Senha * (Máx. 6 caracteres)"
+  type="password"
+  value={senha}
+  onChange={(e) => setSenha(e.target.value)}
+  className={`w-full px-3 py-2 border ${
+    erroSenha ? "border-red-500" : "border-gray-200"
+  } rounded-md focus:outline-none`}
+  autoComplete="new-password" // Desativa sugestões do navegador
+  spellCheck="false" // Evita correção automática
+/>
+
+        {erroSenha && <p className="text-red-500 text-sm">{erroSenha}</p>}
+
         <button
           type="submit"
           className="w-full bg-blue-400 text-white py-2 px-4 rounded-md hover:underline transition duration-300"
@@ -62,6 +101,7 @@ function Cadastro() {
           Cadastrar-se
         </button>
       </form>
+      
       <Link to="/login" className="text-blue-700 hover:underline mt-4 block text-center">
         Cadastre-se para fazer Login
       </Link>
