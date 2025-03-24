@@ -63,7 +63,7 @@ function Cadastro() {
         </button>
       </form>
       <Link to="/login" className="text-blue-700 hover:underline mt-4 block text-center">
-        Já tem uma conta? Faça Login
+        Cadastre-se para fazer Login
       </Link>
     </div>
   );
