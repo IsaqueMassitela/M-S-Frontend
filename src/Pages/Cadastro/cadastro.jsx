@@ -102,7 +102,7 @@ function Cadastro() {
         </button>
       </form>
       
-      <Link to="/login" className="text-blue-700 hover:underline mt-4 block text-center">
+      <Link to="/" className="text-blue-700 hover:underline mt-4 block text-center">
         Cadastre-se para fazer Login
       </Link>
     </div>

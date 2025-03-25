@@ -85,7 +85,7 @@ function Login() {
         </button>
       </form>
       
-      <Link to="/" className="text-blue-700 hover:underline mt-4 block text-center">
+      <Link to="Cadastro" className="text-blue-700 hover:underline mt-4 block text-center">
         Ainda não tem uma conta? Faça o Cadastro
       </Link>
     </div>
