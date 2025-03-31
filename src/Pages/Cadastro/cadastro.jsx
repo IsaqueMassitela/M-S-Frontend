@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -24,6 +25,7 @@ function Cadastro() {
     e.preventDefault();
     let temErro = false;
 
+    console.log(nome + ' submitted' + email + ' to' + senha);
     // Validação do email
     if (!email.trim()) {
       setErroEmail("O campo email é obrigatório.");
@@ -47,6 +49,32 @@ function Cadastro() {
     }
 
     if (temErro) return;
+
+    //fetch api using axios to put data
+    axios.put('http://localhost:3000/usuarios', { nome, email, senha })
+     .then(response => {
+        console.log(response);
+        alert("success");
+      })
+     .catch(error => {
+        console.error(nome, error, senha);
+        alert("error");
+      });
+
+    //axios.get data
+    // axios.get('http://localhost:3000/usuarios')
+    //  .then(response => {
+    //     console.log(response.data);
+    //   })
+    //  .catch(error => {
+    //     console.error(error);
+    //   });
+    // Simulando o cadastro usando setTimeout para demonstrar o loading
+    setTimeout(() => {
+      if (temErro) return;
+
+      console.log("Cadastro realizado:", { nome, email, senha });
+    }, 2000); // Simulando um delay de 2 segundos
 
     console.log("Cadastro realizado:", { nome, email, senha });
   };
