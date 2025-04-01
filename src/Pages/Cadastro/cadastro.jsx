@@ -1,32 +1,29 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function Cadastro() {
+  // Estado para armazenar os valores dos campos
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   
+  // Estados para exibir mensagens de erro
   const [erroEmail, setErroEmail] = useState("");
   const [erroSenha, setErroSenha] = useState("");
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    setNome(""); 
-    setEmail(""); 
-    setSenha("");
-  }, []);
-
-  // Função de validação de e-mail corrigida
+  // Função de validação de e-mail
   const validarEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); // Validação robusta
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSubmit = (e) => {
+  // Função de envio de formulário
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let temErro = false;
 
-    console.log(nome + ' submitted' + email + ' to' + senha);
-    // Validação do email
+    // Validação do e-mail
     if (!email.trim()) {
       setErroEmail("O campo email é obrigatório.");
       temErro = true;
@@ -48,35 +45,26 @@ function Cadastro() {
       setErroSenha("");
     }
 
+    // Se houver erros, não envia o formulário
     if (temErro) return;
 
-    //fetch api using axios to put data
-    axios.put('http://localhost:3000/usuarios', { nome, email, senha })
-     .then(response => {
-        console.log(response);
-        alert("success");
-      })
-     .catch(error => {
-        console.error(nome, error, senha);
-        alert("error");
-      });
+    // Envia os dados para o backend
+    try {
+      const response = await axios.post('http://localhost:3000/usuarios', { nome, email, senha });
+      setMessage("Usuário cadastrado com sucesso!");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+      setMessage("Erro ao cadastrar usuário. Verifique os dados e tente novamente.");
+    }
 
-    //axios.get data
-    // axios.get('http://localhost:3000/usuarios')
-    //  .then(response => {
-    //     console.log(response.data);
-    //   })
-    //  .catch(error => {
-    //     console.error(error);
-    //   });
-    // Simulando o cadastro usando setTimeout para demonstrar o loading
-    setTimeout(() => {
-      if (temErro) return;
-
-      console.log("Cadastro realizado:", { nome, email, senha });
-    }, 2000); // Simulando um delay de 2 segundos
-
-    console.log("Cadastro realizado:", { nome, email, senha });
+    // Tenta buscar a lista de usuários cadastrados
+    try {
+      const response = await axios.get('http://localhost:3000/usuarios');
+      console.log("Usuários cadastrados:", response.data);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
   };
 
   return (
@@ -87,39 +75,33 @@ function Cadastro() {
         <input
           placeholder="Nome"
           type="text"
-          value={nome} 
+          value={nome}
           onChange={(e) => setNome(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none"
-          autoComplete="off" 
+          autoComplete="off"
         />
         
         <input
-  placeholder="Email *"
-  type="text"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  className={`w-full px-3 py-2 border ${
-    erroEmail ? "border-red-500" : "border-gray-200"
-  } rounded-md focus:outline-none`}
-  autoComplete="off" // Desativa sugestões do navegador
-  spellCheck="false" // Evita correção automática
-  inputMode="email" // Indica que o campo é um email
-/>
-
+          placeholder="Email *"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={`w-full px-3 py-2 border ${erroEmail ? "border-red-500" : "border-gray-200"} rounded-md focus:outline-none`}
+          autoComplete="off"
+          spellCheck="false"
+          inputMode="email"
+        />
         {erroEmail && <p className="text-red-500 text-sm">{erroEmail}</p>}
 
         <input
-  placeholder="Senha * (Máx. 6 caracteres)"
-  type="password"
-  value={senha}
-  onChange={(e) => setSenha(e.target.value)}
-  className={`w-full px-3 py-2 border ${
-    erroSenha ? "border-red-500" : "border-gray-200"
-  } rounded-md focus:outline-none`}
-  autoComplete="new-password" // Desativa sugestões do navegador
-  spellCheck="false" // Evita correção automática
-/>
-
+          placeholder="Senha * (Máx. 6 caracteres)"
+          type="password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          className={`w-full px-3 py-2 border ${erroSenha ? "border-red-500" : "border-gray-200"} rounded-md focus:outline-none`}
+          autoComplete="new-password"
+          spellCheck="false"
+        />
         {erroSenha && <p className="text-red-500 text-sm">{erroSenha}</p>}
 
         <button
@@ -130,8 +112,10 @@ function Cadastro() {
         </button>
       </form>
       
+      {message && <p className="mt-4 text-center text-green-600">{message}</p>}
+
       <Link to="/" className="text-blue-700 hover:underline mt-4 block text-center">
-        Cadastre-se para fazer Login
+        Já tem uma conta? Faça login
       </Link>
     </div>
   );
