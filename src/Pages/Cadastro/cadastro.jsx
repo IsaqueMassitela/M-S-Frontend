@@ -65,6 +65,33 @@ function Cadastro() {
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     }
+    //fetch api using axios to put data
+    axios.put('http://localhost:3000/usuarios', { nome, email, senha })
+     .then(response => {
+        console.log(response);
+        alert("success");
+      })
+     .catch(error => {
+        console.error(nome, error, senha);
+        alert("error");
+      });
+
+    //axios.get data
+    // axios.get('http://localhost:3000/usuarios')
+    //  .then(response => {
+    //     console.log(response.data);
+    //   })
+    //  .catch(error => {
+    //     console.error(error);
+    //   });
+    // Simulando o cadastro usando setTimeout para demonstrar o loading
+    setTimeout(() => {
+      if (temErro) return;
+
+      console.log("Cadastro realizado:", { nome, email, senha });
+    }, 2000); 
+
+    console.log("Cadastro realizado:", { nome, email, senha });
   };
 
   return (
@@ -91,6 +118,18 @@ function Cadastro() {
           spellCheck="false"
           inputMode="email"
         />
+  placeholder="Email *"
+  type="text"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className={`w-full px-3 py-2 border ${
+    erroEmail ? "border-red-500" : "border-gray-200"
+  } rounded-md focus:outline-none`}
+  autoComplete="off" 
+  spellCheck="false" 
+  inputMode="email" 
+/>
+
         {erroEmail && <p className="text-red-500 text-sm">{erroEmail}</p>}
 
         <input
@@ -102,6 +141,17 @@ function Cadastro() {
           autoComplete="new-password"
           spellCheck="false"
         />
+  placeholder="Senha * (Máx. 6 caracteres)"
+  type="password"
+  value={senha}
+  onChange={(e) => setSenha(e.target.value)}
+  className={`w-full px-3 py-2 border ${
+    erroSenha ? "border-red-500" : "border-gray-200"
+  } rounded-md focus:outline-none`}
+  autoComplete="new-password" 
+  spellCheck="false" 
+/>
+
         {erroSenha && <p className="text-red-500 text-sm">{erroSenha}</p>}
 
         <button

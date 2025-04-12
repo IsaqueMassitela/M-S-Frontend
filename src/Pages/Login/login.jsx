@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Para buscar os dados do backend
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erroEmail, setErroEmail] = useState("");
   const [erroSenha, setErroSenha] = useState("");
-  const [mensagemErro, setMensagemErro] = useState("");
-  
+
   const navigate = useNavigate(); // Hook para redirecionamento
 
   const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -39,74 +37,58 @@ function Login() {
 
     if (temErro) return;
 
-    try {
-      // Faz a requisição para buscar usuários cadastrados
-      const response = await axios.get("http://localhost:3000/usuarios");
-      const usuarios = response.data;
+    // Aqui futuramente entraria chamada à API
+    console.log("Login realizado:", { email, password });
 
-      // Verifica se o email e senha correspondem a um usuário cadastrado
-      const usuarioEncontrado = usuarios.find(
-        (user) => user.email === email && user.senha === password
-      );
-
-      if (usuarioEncontrado) {
-        console.log("Login bem-sucedido!", usuarioEncontrado);
-        
-        // Salvar informações do usuário (opcional, usar localStorage)
-        localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
-
-        // Redirecionar para o Dashboard
-        navigate("/Dashboard");
-      } else {
-        setMensagemErro("Email ou senha incorretos.");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
-      setMensagemErro("Erro ao acessar o sistema. Tente novamente.");
-    }
+    // Redireciona para o dashboard
+    navigate("/dashboard");
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-blue-200">
-      <div className="max-w-md mx-auto mt-5 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-5 text-center text-gray-800">Login</h2>
+    <div className="max-w-md mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold mb-5 text-center text-gray-800">Login</h2>
 
-        <form className="flex flex-col gap-4" autoComplete="off" onSubmit={handleSubmit}>
-          <input
-            placeholder="Digite Email*"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={`w-full px-3 py-2 border ${erroEmail ? "border-red-500" : "border-gray-200"} rounded-md`}
-            autoComplete="off"
-            inputMode="email"
-          />
-          {erroEmail && <p className="text-red-500 text-sm">{erroEmail}</p>}
+      <form className="flex flex-col gap-4" autoComplete="off" onSubmit={handleSubmit}>
+        <input
+          placeholder="Email *"
+          type="text"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={`w-full px-3 py-2 border ${
+            erroEmail ? "border-red-500" : "border-gray-200"
+          } rounded-md focus:outline-none`}
+          autoComplete="off"
+          spellCheck="false"
+          inputMode="email"
+        />
+        {erroEmail && <p className="text-red-500 text-sm">{erroEmail}</p>}
 
-          <input
-            placeholder="Digite a Senha"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={`w-full px-3 py-2 border ${erroSenha ? "border-red-500" : "border-gray-200"} rounded-md`}
-            autoComplete="new-password"
-          />
-          {erroSenha && <p className="text-red-500 text-sm">{erroSenha}</p>}
+        <input
+          placeholder="Senha * (Máx. 6 caracteres)"
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={`w-full px-3 py-2 border ${
+            erroSenha ? "border-red-500" : "border-gray-200"
+          } rounded-md focus:outline-none`}
+          autoComplete="new-password"
+          spellCheck="false"
+        />
+        {erroSenha && <p className="text-red-500 text-sm">{erroSenha}</p>}
 
-          {mensagemErro && <p className="text-red-500 text-center">{mensagemErro}</p>}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+        >
+          Entrar
+        </button>
+      </form>
 
-          <button
-            type="submit"
-            className="w-full font-bold bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-          >
-            Entrar
-          </button>
-        </form>
-
-        <Link to="/Cadastro" className="text-blue-700 font-bold hover:underline mt-4 block text-center">
-          Ainda não tem uma conta? Faça o Cadastro
-        </Link>
-      </div>
+      <Link to="Cadastro" className="text-blue-700 hover:underline mt-4 block text-center">
+        Ainda não tem uma conta? Faça o Cadastro
+      </Link>
     </div>
   );
 }
